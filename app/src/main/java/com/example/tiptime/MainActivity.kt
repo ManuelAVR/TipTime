@@ -1,7 +1,7 @@
 package com.example.tiptime
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.tiptime.databinding.ActivityMainBinding
 import java.text.NumberFormat
 import kotlin.math.ceil
@@ -9,7 +9,7 @@ import kotlin.math.ceil
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,21 +22,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun calculateTip() {
 
-        val serviceCost = binding.costOfService.text.toString().toDouble()
-        val selectedTip = binding.tipOptions.checkedRadioButtonId
+        val serviceCost = binding.costOfService.text.toString().toDoubleOrNull()
 
-        val tipPercentage = when (selectedTip) {
+        if (serviceCost == null) {
+            displayTip(0.0)
+            return
+        }
+
+        val tipPercentage = when (binding.tipOptions.checkedRadioButtonId) {
             R.id.option_amazing -> 0.20
             R.id.option_good -> 0.15
             else -> 0.10
         }
 
         var tip = serviceCost * tipPercentage
-        val roundUp = binding.roundedTipSwitch.isChecked
-        if (roundUp) {
+
+        if (binding.roundedTipSwitch.isChecked) {
             tip = ceil(serviceCost * tipPercentage)
         }
+        displayTip(tip)
+    }
+
+    private fun displayTip(tip: Double){
         val formattedTip = NumberFormat.getCurrencyInstance().format(tip)
         binding.tipResult.text = getString(R.string.tip_amount, formattedTip)
     }
 }
+
