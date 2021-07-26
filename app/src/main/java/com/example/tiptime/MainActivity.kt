@@ -1,7 +1,10 @@
 package com.example.tiptime
 
-import android.os.Bundle
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import android.widget.EditText
 import com.example.tiptime.databinding.ActivityMainBinding
 import java.text.NumberFormat
 import kotlin.math.ceil
@@ -11,6 +14,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    val EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -18,18 +23,27 @@ class MainActivity : AppCompatActivity() {
         binding.calculateButton.setOnClickListener {
             calculateTip()
         }
+        binding.changeActivity.setOnClickListener(){
+            changeActivity()
+        }
     }
+
+    private fun changeActivity() {
+        val intent = Intent(this, ChangeThemeActivity::class.java).apply {
+
+        }
+        startActivity(intent)
+    }
+
 
     private fun calculateTip() {
 
-        val serviceCost = binding.costOfService.text.toString().toDoubleOrNull()
-
-        if (serviceCost == null) {
-            displayTip(0.0)
+        val serviceCost = binding.serviceQuestion.text.toString().toDoubleOrNull()
+        val selectedTip = binding.tipOptions.checkedRadioButtonId
+        if(serviceCost == null){
             return
         }
-
-        val tipPercentage = when (binding.tipOptions.checkedRadioButtonId) {
+        val tipPercentage = when (selectedTip) {
             R.id.option_amazing -> 0.20
             R.id.option_good -> 0.15
             else -> 0.10
